@@ -2,7 +2,10 @@ package guru.springframework.sfgpetclinic.services.springdatajpa;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -12,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.BDDMockito.Then;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import guru.springframework.sfgpetclinic.model.Speciality;
@@ -25,6 +29,22 @@ public class SpecialitySDJpaServiceTest {
 
     @InjectMocks
     SpecialitySDJpaService service;
+
+    @Test
+    void findByIdBddTest() {
+        // given
+        Speciality speciality = new Speciality();
+        given(specialtyRepository.findById(1l)).willReturn(Optional.of(speciality));
+
+        // when
+        Speciality foundSpeciality = service.findById(1l);
+
+        // then
+        assertSame(speciality, foundSpeciality);
+        assertNotNull(speciality);
+        then(specialtyRepository).should().findById(anyLong());
+        then(specialtyRepository).shouldHaveNoMoreInteractions();
+    }
 
     @Test
     void findById() {
