@@ -1,10 +1,12 @@
 package guru.springframework.sfgpetclinic.services.springdatajpa;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -93,6 +95,22 @@ public class SpecialitySDJpaServiceTest {
         assertThrows(RuntimeException.class, () -> service.delete(speciality));
 
         then(specialtyRepository).should().delete(any());
+    }
+
+    @Test
+    void testSaveLamda() {
+        final String MATCH_ME = "MATCH_ME";
+        Speciality speciality = new Speciality();
+        speciality.setDescription("MATCH_ME");
+
+        Speciality saveSpeciality = new Speciality();
+        saveSpeciality.setId(1l);
+
+        when(specialtyRepository.save(argThat(arg -> MATCH_ME.equals(arg.getDescription())))).thenReturn(saveSpeciality);
+
+        Speciality save = service.save(speciality);
+        assertNotNull(save);
+        assertEquals(1l, save.getId());
     }
     
 }
